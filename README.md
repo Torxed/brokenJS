@@ -9,61 +9,63 @@ sort of a minimalistic approach to a framework to interact with HTML resources.
 
 # Example usage
 
-	<html>
-		<head>
-			<style>
-				#chatHistory {
-					border: 1px solid #FF0000;
+```html
+<html>
+	<head>
+		<style>
+			#chatHistory {
+				border: 1px solid #FF0000;
+			}
+
+			#message {
+				border: 1px solid #2256A2;
+			}
+		</style>
+
+		<!-- Import: -->
+		<script src="./brokenJS/broken.js"></script>
+		<script>
+			class chatHistory extends div {
+				constructor(x=0, y=0, width=AUTO, height=AUTO) {
+					super('chatHistory', x, y, width, height);
+					this.create();
 				}
+			}
 
-				#message {
-					border: 1px solid #2256A2;
+			class message extends div {
+				constructor(message=null, x=0, y=0) {
+					super('message', x, y);
+					if(message)
+						this.content = message;
+					this.create();
 				}
-			</style>
+			}
 
-			<!-- Import: -->
-			<script src="./brokenJS/broken.js"></script>
-			<script>
-				class chatHistory extends div {
-					constructor(x=0, y=0, width=AUTO, height=AUTO) {
-						super('chatHistory', x, y, width, height);
-						this.create();
-					}
-				}
+			window.onload = function(e) {
+				var history = new chatHistory(100, 100, 300, 50);
+				// appending to `body` requires the use of a dict
+				// because brokenJS (currently) looks for a `.obj` reference.
+				history.append_to({obj: document.body});
 
-				class message extends div {
-					constructor(message=null, x=0, y=0) {
-						super('message', x, y);
-						if(message)
-							this.content = message;
-						this.create();
-					}
-				}
+				var test_message = new message('This is a message');
+				test_message.append_to(history);
 
-				window.onload = function(e) {
-					var history = new chatHistory(100, 100, 300, 50);
-					// appending to `body` requires the use of a dict
-					// because brokenJS (currently) looks for a `.obj` reference.
-					history.append_to({obj: document.body});
+				// Adding content manually requires a .update() call.
+				var test_message2 = new message();
+				test_message2.content = 'Second message';
+				test_message2.update();
+				test_message2.append_to(history);
+			}
+		</script>
+	</head>
 
-					var test_message = new message('This is a message');
-					test_message.append_to(history);
-
-					// Adding content manually requires a .update() call.
-					var test_message2 = new message();
-					test_message2.content = 'Second message';
-					test_message2.update();
-					test_message2.append_to(history);
-				}
-			</script>
-		</head>
-
-		<body>
-			<div id="normalDiv">
-				Some static content.
-			</div>
-		</body>
-	</html>
+	<body>
+		<div id="normalDiv">
+			Some static content.
+		</div>
+	</body>
+</html>
+```
 
 ## Pass by reference
 
@@ -72,29 +74,33 @@ this just gives a easier handle to modify a originating variable by<br>
 using the variable name and a context to modify the original variable -<br>
 rather than modifying the passed value.
 
-	var test = 0;
+```javascript
+var test = 0;
 
-	function addOne(variable) {
-		variable += 1;
-	}
-	addOne(test);
-	console.log(test);
+function addOne(variable) {
+	variable += 1;
+}
+addOne(test);
+console.log(test);
+```
 
 The following will result in 0, because JS is [pass by value](https://i.stack.imgur.com/QdcG2.gif).<br>
 Instead, what we could do use find the reference to the variable and modify it.
 
-	var test = 0;
+```javascript
+var test = 0;
 
-	function addOne(variable) {
-		var varName = varReference(variable);
-		this[varName] += 1;
-	}
+function addOne(variable) {
+	var varName = varReference(variable);
+	this[varName] += 1;
+}
 
-	window.onload = function() {
-		addOne.call(window, {test});
-		
-		console.log(test);
-	}
+window.onload = function() {
+	addOne.call(window, {test});
+	
+	console.log(test);
+}
+```
 The only down-side to this, is that you still need to pass the variable in a<br>
 `dictionary` *(Object)* manner, otherwise the nasty hack won't work.
 
