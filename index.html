@@ -1,0 +1,181 @@
+<html>
+	<head>
+		<style>
+			#chatHistory {
+				border: 1px solid #FF0000;
+			}
+
+			#message {
+				border: 1px solid #2256A2;
+			}
+		</style>
+
+		<script>
+			/* Prototype overrides */
+			
+			// // // // //
+
+			/* Includes */
+			// TODO: The correct way of doing it (Chrome 70+):
+			//    import {getOriginVariable|*} from './brokenJS/hacks.js';
+			//
+			function ES5_import(url, callback=null) {
+				var head = document.getElementsByTagName('head')[0];
+				var script = document.createElement('script');
+				script.type = 'text/javascript';
+				script.src = url;
+
+				if(callback) {
+					script.onreadystatechange = callback;
+					script.onload = callback;
+				}
+
+				head.insertBefore(script, head.firstChild);
+			}
+
+			ES5_import('./brokenJS/hacks.js');
+			ES5_import('./brokenJS/constants.js');
+			ES5_import('./brokenJS/helpers.js');
+
+			var timers = {};
+			var test_var = null;
+
+			/* Broken.js below
+			*/
+			class obj {
+				constructor (id, content, on_load=null) {
+					this.id = id;
+					this.obj = null;
+					this.content = content;
+					if(!on_load)
+						on_load = this.update;
+
+					populate(this, {obj}, this.id, on_load);
+				}
+
+				move(dx, dy, absolute=true) {
+					if(absolute) {
+						this.x += dx;
+						this.y += dy;
+					} else {
+						this.x = dx;
+						this.y = dy;
+					}
+				}
+
+				update() {
+					console.log('Object ' + this.id + ' now exists');
+					this.obj.id = this.id;
+					if(this.content) {
+						context.appendChild(this.content);
+					}
+				}
+
+				append_to(what) {
+					what.obj.appendChild(this.obj);
+				}
+			}
+
+			class div extends obj {
+
+				constructor(id, x=0, y=0, width=AUTO, height=AUTO, on_load=null) {
+					super(id, on_load=on_load);
+					this.x = x;
+					this.y = y;
+					this.width = width;
+					this.height = height;
+				}
+
+				create() {
+					this.obj = document.createElement('div');
+					this.obj.id = this.id;
+					if(this.x || this.y)
+						this.obj.style.position = 'absolute';
+					this.obj.style.left = this.x; 
+					this.obj.style.top = this.x;
+
+					//var tmp = this.update;
+					//var tmpUpdate = tmp.bind(this);
+					//tmpUpdate();
+					//this.update();
+					this.update();
+				}
+
+				update(styledata={}) {
+					for(var key in styledata) {
+						// Update CSS accordingly
+					}
+
+					this.obj.id = this.id;
+
+					if (this.width) {
+						this.obj.width = this.width;
+						this.obj.style.width = this.width;
+						this.obj.style.overflowX = 'auto';
+					}
+					if (this.height) {
+						this.obj.height = this.height;
+						this.obj.style.height = this.height;
+						this.obj.style.overflowY = 'auto';
+					}
+
+					if(this.x || this.y)
+						this.obj.style.position = 'absolute';
+					this.obj.style.left = this.x; 
+					this.obj.style.top = this.x;
+
+					if(this.content) {
+						if(typeof this.content === str)
+							this.obj.innerHTML = this.content;
+						else
+							this.obj.appendChild(this.content);
+					}
+				}
+			}
+
+			class chatHistory extends div {
+				constructor(x=0, y=0, width=AUTO, height=AUTO) {
+					super('chatHistory', x, y, width, height);
+					this.create();
+				}
+			}
+
+			class message extends div {
+				constructor(message=null, x=0, y=0) {
+					super('message', x, y);
+					if(message)
+						this.content = message;
+						// No need to call .update() after
+						// content has been added, because
+						// .create() below will take care of it.
+					this.create();
+				}
+			}
+
+			window.onload = function(e) {
+				var history = new chatHistory(100, 100, 300, 50);
+				history.append_to({obj: document.body}); // Special event for body TODO: Rework
+
+				var test_message = new message('This is a message');
+				test_message.append_to(history);
+
+				var test_message2 = new message('Second message');
+				test_message2.append_to(history);
+
+				set_timer('DEBUG_create-div', function(){
+					var div = getObj('content');
+					div.innerHTML = '<div id="testdiv">This is a test</div>';
+				}, 1000);
+
+				set_timer('DEBUG_print', function() {
+					//console.log(tmp);
+				}, 2000)
+			}
+		</script>
+	</head>
+
+	<body>
+		<div id="content">
+		</div>
+	</body>
+</html>
