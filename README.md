@@ -64,3 +64,41 @@ sort of a minimalistic approach to a framework to interact with HTML resources.
 			</div>
 		</body>
 	</html>
+
+## Pass by reference
+
+Instead of passing a value to a function/class,<br>
+this just gives a easier handle to modify a originating variable by<br>
+using the variable name and a context to modify the original variable -<br>
+rather than modifying the passed value.
+
+	var test = 0;
+
+	function addOne(variable) {
+		variable += 1;
+	}
+	addOne(test);
+	console.log(test);
+
+The following will result in 0, because JS is [pass by value](https://i.stack.imgur.com/QdcG2.gif).<br>
+Instead, what we could do use find the reference to the variable and modify it.
+
+	var test = 0;
+
+	function addOne(variable) {
+		var varName = varReference(variable);
+		this[varName] += 1;
+	}
+
+	window.onload = function() {
+		addOne.call(window, {test});
+		
+		console.log(test);
+	}
+The only down-side to this, is that you still need to pass the variable in a<br>
+`dictionary` *(Object)* manner, otherwise the nasty hack won't work.
+
+And you need to use the `.call(<context>, {var})` method, because<br>
+you need to know which context to modify (by passing the var name) later.
+
+Working on a easier way to achieve the same result, but it's tricky.

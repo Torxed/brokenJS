@@ -1,3 +1,5 @@
+// https://stackoverflow.com/a/18090877/929999
+
 /*
 	Find out where in the path "we" are.
 	We'll do this by getting the last loaded script (us)
@@ -9,7 +11,7 @@ var __base__ = path.split('/').slice(0, -1).join('/')+'/';
 
 /* Includes */
 // TODO: The correct way of doing it (Chrome 70+):
-//    import {getOriginVariable|*} from './brokenJS/hacks.js';
+//    import {varReference|*} from './brokenJS/hacks.js';
 //
 function ES5_import(url, callback=null) {
 	var head = document.getElementsByTagName('head')[0];
@@ -18,11 +20,12 @@ function ES5_import(url, callback=null) {
 	script.src = url;
 
 	if(callback) {
-		script.onreadystatechange = callback;
-		script.onload = callback;
+		script.onreadystatechange = callback.call(script);
+		script.onload = callback.call(script);
 	}
 
-	head.insertBefore(script, head.firstChild);
+	//head.insertBefore(script, head.firstChild);
+	document.currentScript.parentNode.insertBefore(script, document.currentScript);
 }
 
 ES5_import(__base__+'./subresources/hacks.js');

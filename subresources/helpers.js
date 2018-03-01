@@ -43,7 +43,7 @@ function populate(context, what, With, func, poll_interval=50) {
 	set_timer(UID, function() {
 		var o = getObj(With);
 		if(o) {
-			let varName = getOriginVariable(what);
+			let varName = varReference(what);
 			console.log('Populating ' + varName + ' with ' + With);
 			context[varName] = o;
 

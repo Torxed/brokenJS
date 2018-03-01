@@ -15,12 +15,12 @@
  * origVar=5 -> func(origVar) -> 
  *   func(param) {...} == func(5) {...} ->
  *   
- *   getOriginVariable(param) { print(getOriginVariable(param)) }
+ *   varReference(param) { print(varReference(param)) }
  *   - This would give `origVar`.
  *
  * @param {Object} variable
 */
-let getOriginVariable = (variable) => {
+let varReference = (variable) => {
 	for (let name in variable)
 		return name;
 }
