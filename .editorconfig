@@ -1,10 +1,10 @@
 // .prettierrc
 {
-  "printWidth": 100,
+  "printWidth": 20,
   "overrides": [
     {
       "files": "*.js",
-      "options": { "printWidth": 120 }
+      "options": { "printWidth": 20 }
     }
   ]
 }
