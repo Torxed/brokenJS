@@ -25,13 +25,13 @@ function ES5_import(url, callback=null) {
 	head.insertBefore(script, head.firstChild);
 }
 
-ES5_import(__base__+'./hacks.js');
-ES5_import(__base__+'./constants.js');
-ES5_import(__base__+'./helpers.js');
+ES5_import(__base__+'./subresources/hacks.js');
+ES5_import(__base__+'./subresources/constants.js');
+ES5_import(__base__+'./subresources/helpers.js');
 
 var timers = {};
 
-class obj {
+class brokenObj {
 	constructor (id, content, on_load=null) {
 		this.id = id;
 		this.obj = null;
@@ -39,7 +39,8 @@ class obj {
 		if(!on_load)
 			on_load = this.update;
 
-		populate(this, {obj}, this.id, on_load);
+		var tmpObj = this.obj;
+		populate(this, {tmpObj}, this.id, on_load);
 	}
 
 	move(dx, dy, absolute=true) {
@@ -65,7 +66,7 @@ class obj {
 	}
 }
 
-class div extends obj {
+class div extends brokenObj {
 
 	constructor(id, x=0, y=0, width=AUTO, height=AUTO, on_load=null) {
 		super(id, on_load=on_load);
