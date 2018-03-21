@@ -62,6 +62,28 @@ function populate(context, what, With, func, poll_interval=50) {
 	}, poll_interval);
 }
 
+/**
+ * register(event_name, object_id, function, poll_interval=50)
+ *
+ * Will poll for a object with a certain ID, once that is found,
+ * a event listener will be added with a given key mapping to a function.
+ *
+ * @param {string} event_name - The native JS EventListener key
+ * @param {string} obj_id - The ID of the HTML/DOM object
+ * @param {function} func - The function mapped to the specified event
+ * @param {integer} poll_interval - How fast should the document.timer poll
+*/
+function register(event_name, obj_id, func, poll_interval=50) {
+	var UID = 'eventRegister_'+obj_id+'_'+gen_UID();
+	setTimer(UID, function() {
+		var o = getObj(obj_id);
+		if(o) {
+			o.addEventListener(event_name, func);
+			clearTimer(UID);
+		}
+	}, poll_interval);
+}
+
 function destroy(obj) {
 	// Try to remove on the class handle (first by string ref, then obj.id ref),
 	// if it's missing, we'll call remove on the DOM.
@@ -84,6 +106,18 @@ function clearTimer(name) {
 
 function setTimer(name, func, time=10) {
 	timers[name] = setInterval(func, time);
+}
+
+function GetElementInsideContainer(container, childID) {
+	var elm = null;
+	var elms = container.getElementsByTagName("*");
+	for (var i = 0; i < elms.length; i++) {
+		if (elms[i].id === childID) {
+			elm = elms[i];
+			break;
+		}
+	}
+	return elm;
 }
 
 /*

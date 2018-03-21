@@ -40,14 +40,16 @@ const key = {
 };
 
 var div_keyHooks = {};
+window['broken_classes'] = {}
 
 class brokenObj {
 	constructor (id, content, on_load=null) {
 		this.id = id;
+		broken_classes[id] = this;
+		frames[this.id] = this; // same thing?
 		this.obj = null;
 		this.content = content;
 		this.parent = window;
-		frames[this.id] = this;
 		if(!on_load)
 			on_load = this.update;
 
@@ -70,6 +72,12 @@ class brokenObj {
 			this.obj.remove();
 		delete(frames[this.id]);
 		// Something else.
+	}
+
+	delete() {
+		if(this.obj)
+			this.obj.remove();
+		delete(frames[this.id]);
 	}
 
 	click(f) {
@@ -107,6 +115,22 @@ class div extends brokenObj {
 
 	clear() {
 		this.obj.innerHTML = '';
+	}
+
+	get_width() {
+		return this.obj.offsetWidth;
+	}
+
+	get_height() {
+		return this.obj.offsetHeight;
+	}
+
+	hide() {
+		this.obj.style.visibility = 'hidden';
+	}
+
+	show() {
+		this.obj.style.visibility = 'visible';
 	}
 
 	create() {
@@ -149,6 +173,14 @@ class div extends brokenObj {
 
 	absolute() {
 		this.obj.style.position = 'absolute';
+	}
+
+	class(name) {
+		this.obj.classList.add(name);
+	}
+
+	del_class(name) {
+		this.obj.classList.remove(name);
 	}
 
 	add_element(obj) {
